@@ -101,15 +101,7 @@ public class MainActivity extends FragmentActivity implements
 		mServiceManager.setNotificationIDResourceID(R.drawable.ic_launcher);
 		mServiceManager.setCustomMessageAction(new Intent(MainActivity.this,
 				MainActivity.class), this);
-//		if (ServiceManager.isPointServiceRunning(this)) {
-//			try {
-//				mServiceManager.start(this);
-//			} catch (UnknownArgumentException e) {
-//				Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
-//			} catch (LocationServicesNotEnabledException e) {
-//				Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
-//			}
-//		}
+
 		mProgress = new ProgressDialog(this);
 		mProgress.setCancelable(false);
 	}
@@ -209,7 +201,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onApplicationNotificationReceived(
 			ApplicationNotification applicationNotification) {
-		// TODO Auto-generated method stub
+		
 		if (applicationNotification != null
 				&& applicationNotification.getFence() != null) {
 			Toast.makeText(
@@ -223,7 +215,7 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onSpeedUpdate(Speed speed) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -264,15 +256,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public void onServiceStatusChanged(ServiceStatus oldStatus,
 			ServiceStatus updatedStatus) {
-//		if (!oldStatus.equals(updatedStatus)
-//				&& updatedStatus.equals(ServiceStatus.READY)) {
-//			authenticate();
-//		} else if (oldStatus.equals(updatedStatus)
-//				&& updatedStatus.equals(ServiceStatus.READY)) {
-//			if (mProgress != null && mProgress.isShowing()) {
-//				mProgress.dismiss();
-//			}
-//		}
+
 		Log.i("MainActivity",
 				"onServiceStatusChanged() called" + oldStatus.toString()
 						+ " ::: " + updatedStatus.toString());

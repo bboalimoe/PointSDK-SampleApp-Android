@@ -60,7 +60,7 @@ public class PointMapFragment extends SupportMapFragment implements
 			mMap.moveCamera(CameraUpdateFactory
 					.newCameraPosition(cameraPosition));
 			
-			//loadCurrentLocation();
+			
 		}
 	}
 
@@ -154,7 +154,7 @@ public class PointMapFragment extends SupportMapFragment implements
 		CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLng(latLong);
 		mMap.animateCamera(cameraUpdate);
 		CircleOptions circleOptions = new CircleOptions();
-		//if (mLocation.hasAccuracy()) {
+		
 			circleOptions.center(latLong).radius(mLocation.getAccuracy());
 			circleOptions.fillColor(0x88769cc7);
 			circleOptions.strokeWidth(2);
@@ -169,12 +169,12 @@ public class PointMapFragment extends SupportMapFragment implements
 				mCircle.setCenter(latLong);
 				mCurrentPosition.setCenter(latLong);
 			}
-		//}
+		
 	}
 
 	@Override
 	public void onError(String message) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -207,7 +207,7 @@ public class PointMapFragment extends SupportMapFragment implements
 					lastKnownLocation.getLongitude());
 		}
 		LatLng lt = new LatLng(-37.818049, 144.9795319);
-		//mLocation = new Location();
+		
 		return lt;
 	}
 
