@@ -16,37 +16,25 @@ apply plugin: 'android'
 android {
 
     compileSdkVersion "Google Inc.:Google APIs:19"
-
     buildToolsVersion "20.0.0"
-
+    
     defaultConfig {
-
         applicationId "com.bluedotinnovation.android.pointapp"
-
         minSdkVersion 9
-
         targetSdkVersion 19
     }
-
+    
     buildTypes {
-
         release {
-
             runProguard false
-
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
-
     }
-
-}
-dependencies {
-
-    compile fileTree(include: '*.jar', dir: 'libs')
-
-    compile 'com.google.android.gms:play-services:4.2.42'
-
-    compile 'com.android.support:appcompat-v7:19.0.+'
+    dependencies {
+        compile fileTree(include: '*.jar', dir: 'libs')
+        compile 'com.google.android.gms:play-services:4.2.42'
+        compile 'com.android.support:appcompat-v7:19.0.+'
+    }
 }
 
 Perform a gradle sync and all your problems will be solved. Enjoy!
