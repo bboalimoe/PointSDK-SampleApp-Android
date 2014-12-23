@@ -49,4 +49,4 @@ dependencies {
     compile 'com.android.support:appcompat-v7:19.0.+'
 }
 
-8. Perform a gradle sync and all your problems will be solved. Enjoy!
+Perform a gradle sync and all your problems will be solved. Enjoy!
