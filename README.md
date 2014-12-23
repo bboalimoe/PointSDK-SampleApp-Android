@@ -14,6 +14,7 @@ If you would like to use Android Studio, here is the step you should follow:
 apply plugin: 'android'
 
 android {
+    
     compileSdkVersion "Google Inc.:Google APIs:19"
     buildToolsVersion "20.0.0"
     
