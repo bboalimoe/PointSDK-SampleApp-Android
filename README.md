@@ -2,7 +2,7 @@ PointSDK-SampleApp-Android
 ==========================
 
 Eclipse based development environment
-====================================
+-------------------------------------
 If you are working with ADT in Eclipse, the project source code can be imported as an Android project into Eclipse directly. After the project is successfully imported, then import the  Google Play Service library project and Android Support-V7 library into the Eclipse and make references to these two libraries. 
 
 Finally, download the latest version of the Bluedot Point SDK jar to the lib folder. The Bluedot Point SDK can be downloaded by registering with the back-end at
@@ -10,7 +10,7 @@ Finally, download the latest version of the Bluedot Point SDK jar to the lib fol
 https://www.pointaccess.bluedot.com.au/pointaccess-v1/html/customer/basic-registration-form.html
 
 Android Studio based development environment
-============================================
+--------------------------------------------
 
 If your development environment is Android Studio, please follow the steps below to import the project:
 
@@ -22,18 +22,14 @@ If your development environment is Android Studio, please follow the steps below
 6. Make sure the content of the file is as below:
 
 apply plugin: 'android'
-
 android {
-    
     compileSdkVersion "Google Inc.:Google APIs:19"
     buildToolsVersion "20.0.0"
-    
     defaultConfig {
         applicationId "com.bluedotinnovation.android.pointapp"
         minSdkVersion 9
         targetSdkVersion 19
     }
-    
     buildTypes {
         release {
             runProguard false
