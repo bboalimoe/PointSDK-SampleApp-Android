@@ -22,7 +22,9 @@ If your development environment is Android Studio, please follow the steps below
 6. Make sure the content of the file is as below:
 
 apply plugin: 'android'
+
 android {
+
     compileSdkVersion "Google Inc.:Google APIs:19"
     buildToolsVersion "20.0.0"
     defaultConfig {
