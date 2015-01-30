@@ -25,12 +25,12 @@ apply plugin: 'android'
 
 android {
 
-    compileSdkVersion "Google Inc.:Google APIs:19"
-    buildToolsVersion "20.0.0"
+    compileSdkVersion "Google Inc.:Google APIs:21"
+    buildToolsVersion "21"
     defaultConfig {
         applicationId "com.bluedotinnovation.android.pointapp"
         minSdkVersion 9
-        targetSdkVersion 19
+        targetSdkVersion 21
     }
     buildTypes {
         release {
