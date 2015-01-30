@@ -2,19 +2,20 @@ package com.bluedot.pointapp;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import android.app.Activity;
-import android.content.Context;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import au.com.bluedot.application.model.geo.Fence;
 import au.com.bluedot.model.geo.BoundingBox;
 import au.com.bluedot.model.geo.Circle;
 import au.com.bluedot.model.geo.Point;
 import au.com.bluedot.model.geo.Polygon;
-import au.com.bluedot.point.LocationListener;
+import au.com.bluedot.point.BlueDotLocationListener;
 import au.com.bluedot.point.ZoneInfo;
+
 import com.bluedotinnovation.android.pointapp.R;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -28,8 +29,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 
 public class PointMapFragment extends SupportMapFragment implements
-		LocationListener {
+        BlueDotLocationListener {
 
+    private static final String TAG = PointMapFragment.class.getSimpleName();
 	private GoogleMap mMap;
 	private MainActivity mActivity;
 	private Location mLocation;
@@ -130,7 +132,8 @@ public class PointMapFragment extends SupportMapFragment implements
 	private void loadDetails(ArrayList<ZoneInfo> zonesInfo) {
 		mMap.clear();
 		mCircle = null;
-		for (ZoneInfo zoneInfo : zonesInfo) {
+        Log.i(TAG, "Zone size: "+zonesInfo.size());
+        for (ZoneInfo zoneInfo : zonesInfo) {
 			for (Fence fence : zoneInfo.getFences()) {
 				if (mMap != null) {
 					displayFenceOnMap(fence);
@@ -143,11 +146,21 @@ public class PointMapFragment extends SupportMapFragment implements
 	public void onLocationChanged(Location location) {
 		mLocation = location;
 		if (!mIsInBackbround) {
-			loadCurrentLocation();
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    loadCurrentLocation();
+                }
+            });
+
 		}
 	}
 
 	private void loadCurrentLocation() {
+		
+		if(mLocation == null)
+			return;
+		
 		LatLng latLong = new LatLng(mLocation.getLatitude(),
 				mLocation.getLongitude());
 
@@ -177,6 +190,7 @@ public class PointMapFragment extends SupportMapFragment implements
 		
 	}
 
+	//Remove location listener in onPause callback
 	@Override
 	public void onPause() {
 		super.onPause();
@@ -184,28 +198,18 @@ public class PointMapFragment extends SupportMapFragment implements
 		mActivity.unsubscribeLocationUpdates(this);
 	}
 
+	
+	//Register location listener in onResume call back to get location update
 	@Override
 	public void onResume() {
 		super.onResume();
 		loadDetails(mActivity.getZones());
 		mActivity.subscribeForLocationUpdates(this);
 		mIsInBackbround = false;
+        loadCurrentLocation();
 	}
 
 	public LatLng getLastKnownPosition() {
-		// Acquire a reference to the system Location Manager
-		LocationManager locationManager = (LocationManager) mActivity
-				.getSystemService(Context.LOCATION_SERVICE);
-		String locationProvider = LocationManager.NETWORK_PROVIDER;
-		// Or use LocationManager.GPS_PROVIDER
-
-		Location lastKnownLocation = locationManager
-				.getLastKnownLocation(locationProvider);
-		if (lastKnownLocation != null) {
-			mLocation = lastKnownLocation;
-			return new LatLng(lastKnownLocation.getLatitude(),
-					lastKnownLocation.getLongitude());
-		}
 		LatLng lt = new LatLng(-37.818049, 144.9795319);
 		
 		return lt;

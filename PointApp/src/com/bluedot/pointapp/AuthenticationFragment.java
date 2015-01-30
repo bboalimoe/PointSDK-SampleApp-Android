@@ -12,10 +12,15 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import au.com.bluedot.point.net.engine.ApplicationSharedPreferencesHelper;
+
+import au.com.bluedot.point.BDError;
+import au.com.bluedot.point.ServiceStatusListener;
+
+import au.com.bluedot.point.net.engine.ServiceManager;
+
 import com.bluedotinnovation.android.pointapp.R;
 
-public class AuthenticationFragment extends Fragment implements OnClickListener {
+public class AuthenticationFragment extends Fragment implements OnClickListener, ServiceStatusListener{
 
 	/**
 	 * The fragment argument representing the section number for this fragment.
@@ -68,8 +73,7 @@ public class AuthenticationFragment extends Fragment implements OnClickListener 
 		mEdtPackageName.setText(mPackageName);
 		mBtnAuthenticate = (Button) rootView
 				.findViewById(R.id.btn_authenticate);
-		mIsAuthenticated = ApplicationSharedPreferencesHelper.getInstance(
-				mActivity).isAuthenticated();
+
 		mBtnAuthenticate.setOnClickListener(this);
 		return rootView;
 	}
@@ -77,10 +81,9 @@ public class AuthenticationFragment extends Fragment implements OnClickListener 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		mIsAuthenticated = ApplicationSharedPreferencesHelper.getInstance(
-				mActivity).isAuthenticated();
-		mBtnAuthenticate.setText(mIsAuthenticated ? R.string.clear_logout
-				: R.string.save_authenticate);
+		
+		//Checking the Bluedot Point Service status using isBlueDotPointServiceRunning in the ServiceManager by passing a ServiceStatusListener
+        ServiceManager.getInstance(getActivity()).isBlueDotPointServiceRunning(this);
 	}
 
 	@Override
@@ -94,22 +97,14 @@ public class AuthenticationFragment extends Fragment implements OnClickListener 
 	}
 
 	public void refresh() {
-		mIsAuthenticated = ApplicationSharedPreferencesHelper.getInstance(
-				mActivity).isAuthenticated();
-		if (mBtnAuthenticate != null) {
-			handler.post(new Runnable() {
+        
+		handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ServiceManager.getInstance(getActivity()).isBlueDotPointServiceRunning(AuthenticationFragment.this);
+            }
+        },500);
 
-				@Override
-				public void run() {
-					mBtnAuthenticate
-							.setText(mIsAuthenticated ? R.string.clear_logout
-									: R.string.save_authenticate);
-
-				}
-
-			});
-
-		}
 	}
 
 	public void updateLoginDetails(String packageName, String apiKey,
@@ -129,6 +124,13 @@ public class AuthenticationFragment extends Fragment implements OnClickListener 
 	public void onClick(View v) {
 		if (mIsAuthenticated) {
 			mActivity.stopService();
+            mIsAuthenticated = false;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mBtnAuthenticate.setText(getString(R.string.save_authenticate));
+                }
+            });
 		} else {
 			if (TextUtils.isEmpty(mEdtEmail.getText())
 					|| TextUtils.isEmpty(mEdtApiKey.getText())
@@ -136,11 +138,65 @@ public class AuthenticationFragment extends Fragment implements OnClickListener 
 				new AlertDialog.Builder(getActivity()).setTitle("Error")
 						.setMessage("Please enter login details.")
 						.setPositiveButton("OK", null).create().show();
-			} else
-				mActivity.startAuthentication(mEdtEmail.getText().toString(),
-						mEdtApiKey.getText().toString(), mEdtPackageName
-								.getText().toString());
+			} else{
+                mActivity.startAuthentication(mEdtEmail.getText().toString(),
+                        mEdtApiKey.getText().toString(), mEdtPackageName
+                                .getText().toString());
+                mIsAuthenticated = true;
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBtnAuthenticate.setText(getString(R.string.clear_logout));
+                    }
+                });
+            }
+
 		}
 
 	}
+
+	//Update the button status when the Bluedot Point Service status callback is invoked
+    @Override
+    public void onBlueDotPointServiceStartedSuccess() {
+        mIsAuthenticated = true;
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mBtnAuthenticate.setText(getString(R.string.clear_logout));
+            }
+        });
+
+    }
+
+    @Override
+    public void onBlueDotPointServiceStop() {
+        mIsAuthenticated = false;
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mBtnAuthenticate.setText(getString(R.string.save_authenticate));
+            }
+        });
+    }
+
+    @Override
+    public void onBlueDotPointServiceError(BDError bdError) {
+        if(bdError.isFatal()){
+            mIsAuthenticated = false;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mBtnAuthenticate.setText(getString(R.string.save_authenticate));
+                }
+            });
+        }
+    }
+
+    
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ServiceManager.getInstance(getActivity()).removeBlueDotPointServiceStatusListener(this);
+    }
 }

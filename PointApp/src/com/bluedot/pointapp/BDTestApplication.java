@@ -13,8 +13,7 @@ public class BDTestApplication extends Application {
 	public void onCreate() {
 		// The following line triggers the initialization of ACRA
 		ACRA.init(this);
-		CrashReportSender yourSender = new CrashReportSender();
-		ACRA.getErrorReporter().setReportSender(yourSender);
+
 		super.onCreate();
 	}
 }
